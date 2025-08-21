@@ -14,6 +14,19 @@ interface InsightItem {
   createdAt?: string;
   updatedAt?: string;
   slug?: string;
+  headline?: string;
+  name?: string;
+  summary?: string;
+  excerpt?: string;
+  description?: string;
+  attributes?: {
+    title?: string;
+    headline?: string;
+    type?: string;
+    summary?: string;
+    excerpt?: string;
+    description?: string;
+  };
   [key: string]: unknown;
 }
 
