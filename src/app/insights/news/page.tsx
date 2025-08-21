@@ -1,4 +1,5 @@
 import Pagination from "@/components/Pagination";
+import { headers } from "next/headers";
 
 export const metadata = {
   title: "News | Insights",
@@ -25,8 +26,12 @@ interface PaginationInfo {
 }
 
 async function fetchInsights(limit = 10, sort = "-createdAt", page = 1): Promise<{ items: InsightItem[]; raw: unknown; pagination: PaginationInfo }> {
-  const baseUrl = "/api/insights";
-  const url = new URL(baseUrl, "http://localhost:3000"); // Updated to port 3001
+  const headersList = await headers();
+  const host = headersList.get("host") || "localhost:3000";
+  const proto = headersList.get("x-forwarded-proto") || (process.env.NODE_ENV === "production" ? "https" : "http");
+
+  const baseUrl = `${proto}://${host}/api/insights`;
+  const url = new URL(baseUrl);
   url.searchParams.set("limit", String(limit));
   url.searchParams.set("sort", sort);
   url.searchParams.set("page", String(page));
@@ -82,7 +87,7 @@ function getItemSummary(item: InsightItem): string | null {
 }
 
 interface PageProps {
-  searchParams: { page?: string; limit?: string; sort?: string };
+  searchParams: Promise<{ page?: string; limit?: string; sort?: string }>;
 }
 
 export default async function InsightsNewsPage({ searchParams }: PageProps) {
