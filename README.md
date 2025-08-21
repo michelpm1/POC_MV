@@ -29,6 +29,19 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Insights CMS proxy
+
+- API route: `GET /api/insights` proxies `https://uat-cms.marketvector.com/admin/collections/insights`.
+- Query params supported: `limit`, `sort` (defaults: `10`, `-type`).
+- Optional auth: set environment variable `MV_CMS_TOKEN` for a `Bearer` token header.
+- Example:
+
+```bash
+curl "http://localhost:3000/api/insights?limit=10&sort=-type"
+```
+
+The page `src/app/insights/news/page.tsx` fetches the list server-side and renders a grid. It supports empty and error states.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
