@@ -1,5 +1,3 @@
-import { NextRequest } from "next/server";
-
 function hexToUint8Array(hex: string): Uint8Array {
   const clean = hex.startsWith("0x") ? hex.slice(2) : hex;
   const len = clean.length;
@@ -10,9 +8,10 @@ function hexToUint8Array(hex: string): Uint8Array {
   return bytes;
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id);
+    const { id: idStr } = await context.params;
+    const id = parseInt(idStr);
     if (Number.isNaN(id)) {
       return new Response("Invalid id", { status: 400 });
     }
