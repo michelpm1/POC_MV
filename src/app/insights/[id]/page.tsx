@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,16 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function extractFirstPdfUrl(html: string | null | undefined): string | null {
+  if (!html || typeof html !== "string") return null;
+  // naive extraction of first href ending with .pdf
+  const hrefMatch = html.match(/href=["']([^"']+\.pdf)["']/i);
+  if (hrefMatch && hrefMatch[1]) return hrefMatch[1];
+  // fallback: any absolute URL in content
+  const urlMatch = html.match(/https?:\/\/[^"'>\s]+/i);
+  return urlMatch ? urlMatch[0] : null;
+}
+
 async function fetchInsight(id: string): Promise<InsightDetail> {
   // Get the host from headers for server-side fetching
   const headersList = await headers();
@@ -86,6 +97,20 @@ interface PageProps {
 export default async function InsightDetailPage({ params }: PageProps) {
   const resolvedParams = await params;
   const insight = await fetchInsight(resolvedParams.id);
+
+  // Auto-open PDFs when a direct link is available
+  const contentHtmlStr = isNonEmptyString(insight.content_html) ? (insight.content_html as string) : null;
+  const legacyHtmlStr = isNonEmptyString(insight.content_legacy) ? (insight.content_legacy as string) : null;
+  const pdfFromContent = extractFirstPdfUrl(contentHtmlStr || legacyHtmlStr || undefined);
+  const pdfFromLink = isNonEmptyString(insight.content_link) ? insight.content_link : null;
+  const hasHexPdf = isNonEmptyString((insight as any).attachment_legacy);
+  const pdfUrl = hasHexPdf
+    ? `/api/insights/${insight.id}/pdf`
+    : (pdfFromLink || pdfFromContent);
+  if (insight.type === 'pdf' && isNonEmptyString(pdfUrl)) {
+    // redirect to local streaming endpoint or external PDF
+    redirect(pdfUrl as string);
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -156,6 +181,15 @@ export default async function InsightDetailPage({ params }: PageProps) {
                 />
               </figure>
             ) : null}
+
+            {/* Open PDF fallback button if type is pdf & pdfUrl known but redirect didn't happen (e.g., dynamic nav) */}
+            {insight.type === 'pdf' && isNonEmptyString(pdfUrl) && (
+              <div className="mb-6">
+                <a href={pdfUrl as string} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+                  Open PDF →
+                </a>
+              </div>
+            )}
 
             {/* Embed code */}
             {hasEmbed ? (

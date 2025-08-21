@@ -54,6 +54,7 @@ export async function GET(
         featured
         access_counter
         thumbnail_legacy
+        attachment_legacy
         authorUserdefined
         tagIndexes
         status
