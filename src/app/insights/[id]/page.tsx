@@ -51,6 +51,7 @@ interface InsightDetail {
   featured: boolean;
   access_counter: number | null;
   thumbnail_legacy: string | null;
+  attachment_legacy: string | null;
   authorUserdefined: string | null;
   tagIndexes: string[] | null;
   status: string;
@@ -103,7 +104,7 @@ export default async function InsightDetailPage({ params }: PageProps) {
   const legacyHtmlStr = isNonEmptyString(insight.content_legacy) ? (insight.content_legacy as string) : null;
   const pdfFromContent = extractFirstPdfUrl(contentHtmlStr || legacyHtmlStr || undefined);
   const pdfFromLink = isNonEmptyString(insight.content_link) ? insight.content_link : null;
-  const hasHexPdf = isNonEmptyString((insight as any).attachment_legacy);
+  const hasHexPdf = isNonEmptyString(insight.attachment_legacy);
   const pdfUrl = hasHexPdf
     ? `/api/insights/${insight.id}/pdf`
     : (pdfFromLink || pdfFromContent);
