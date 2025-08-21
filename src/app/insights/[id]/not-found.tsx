@@ -7,7 +7,7 @@ export default function NotFound() {
         <div className="text-6xl mb-4">🔍</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Insight Not Found</h1>
         <p className="text-gray-600 mb-8">
-          The insight you're looking for doesn't exist or may have been removed.
+          The insight you&rsquo;re looking for doesn&rsquo;t exist or may have been removed.
         </p>
         <Link
           href="/insights/news"

@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import Link from "next/link";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -104,7 +106,7 @@ export default async function InsightDetailPage({ params }: PageProps) {
       <section className="border-b bg-gray-50">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-            <a href="/insights/news" className="hover:text-blue-600">← Back to Insights</a>
+            <Link href="/insights/news" className="hover:text-blue-600">← Back to Insights</Link>
             <span>•</span>
             <span className="capitalize">{insight.category}</span>
             <span>•</span>
@@ -145,10 +147,12 @@ export default async function InsightDetailPage({ params }: PageProps) {
             {/* Thumbnail */}
             {isNonEmptyString(insight.thumbnail_legacy) ? (
               <figure className="mb-8">
-                <img
+                <Image
                   src={insight.thumbnail_legacy}
                   alt={insight.title}
-                  className="w-full rounded-lg border"
+                  width={1200}
+                  height={630}
+                  className="w-full h-auto rounded-lg border"
                 />
               </figure>
             ) : null}

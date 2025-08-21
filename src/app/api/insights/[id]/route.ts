@@ -5,9 +5,6 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const resolvedParams = await params;
   const id = resolvedParams.id;
-  const locale = searchParams.get("locale") || "en";
-  const draft = searchParams.get("draft") || "false";
-  const depth = searchParams.get("depth") || "1";
 
   // GraphQL query for individual insight
   const query = `
@@ -113,7 +110,7 @@ export async function GET(
           errors: data.errors,
           insightId: id,
           query,
-          variables: { id }
+          variables: { id: parseInt(id) }
         }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
