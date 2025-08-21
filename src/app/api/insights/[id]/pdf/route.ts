@@ -33,7 +33,8 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     }
 
     const bytes = hexToUint8Array(hex);
-    return new Response(bytes, {
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    return new Response(blob, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
